@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model SequelizeMeta {
+  name String @id @unique(map: "name") @db.VarChar(255)
+}
+
+model jobs {
+  id            Int       @id @default(autoincrement())
+  title         String?   @db.VarChar(255)
+  slug          String?   @db.VarChar(255)
+  content       String?   @db.Text
+  emailTo       String?   @db.VarChar(255)
+  reportManager String?   @db.VarChar(255)
+  dateLimit     DateTime? @db.DateTime(0)
+  status        Boolean?
+  createdAt     DateTime  @db.DateTime(0)
+  updatedAt     DateTime  @db.DateTime(0)
+  userId        Int?
+  users         users?    @relation(fields: [userId], references: [id], map: "jobs_userId_foreign_idx")
+
+  @@index([userId], map: "jobs_userId_foreign_idx")
+}
+
+model posts {
+  id        Int      @id @default(autoincrement())
+  title     String?  @db.VarChar(255)
+  slug      String?  @db.VarChar(255)
+  content   String?  @db.Text
+  status    Boolean?
+  createdAt DateTime @db.DateTime(0)
+  updatedAt DateTime @db.DateTime(0)
+  userId    Int?
+  users     users?   @relation(fields: [userId], references: [id], map: "posts_userId_foreign_idx")
+
+  @@index([userId], map: "posts_userId_foreign_idx")
+}
+
+model users {
+  id          Int      @id @default(autoincrement())
+  firstName   String?  @db.VarChar(32)
+  lastName    String?  @db.VarChar(32)
+  username    String?  @db.VarChar(32)
+  email       String?  @db.VarChar(32)
+  password    String?  @db.VarChar(255)
+  phoneNumber String?  @db.VarChar(32)
+  gender      String?  @db.VarChar(1)
+  status      Boolean?
+  createdAt   DateTime @db.DateTime(0)
+  updatedAt   DateTime @db.DateTime(0)
+  jobs        jobs[]
+  posts       posts[]
+}
